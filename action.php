@@ -3,7 +3,7 @@ include('config.php');
 
 if ($_SERVER['REQUEST_METHOD']!='POST') exit("wrong method");
 
-if (isset($_POST['list'])) $lt = trim(trim($_POST['list'],'/'),'.');
+if (isset($_POST['list'])) $lt = str_replace('.','',str_replace('/','',$_POST['list']));
 else exit("missing");
 if (isset($_POST['id'])) $id = intval($_POST['id']);
 else exit("missing");

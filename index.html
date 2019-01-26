@@ -42,6 +42,18 @@
     .mainMain {
         padding: 80px 0 0;
     }
+
+    .tableSearch {
+        margin-bottom: 20px;
+    }
+
+    tr {
+        word-break: break-word;
+    }
+
+    .toast {
+        background-color: #fff !important;
+    }
     </style>
     <script>
         //var baseURL = "http://legendword.com/lvocab/";
@@ -49,10 +61,11 @@
             user = "test",
             dbList = [],
             dbLoaded = false,
+            db = {},
             listTemplate =  {
                 node: "a",
                 attr: {
-                    class: "list-group-item list-group-item-action",
+                    class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center",
                     id: "list-$id$-list",
                     "data-toggle": "list",
                     href: "#list-$id$",
@@ -76,7 +89,24 @@
                     "aria-labelledby": "list-$id$-list",
                     role: "tabpanel"
                 },
-                children: [{
+                children: [
+                {
+                    node: "div",
+                    attr: {
+                        class: "tableSearch"
+                    },
+                    children: [{
+                        node: "input",
+                        attr: {
+                            class: "form-control mr-sm-2",
+                            type: "search",
+                            placeholder: "Search...",
+                            id: "search-$id$",
+                            onkeyup: "searchKeydown($id$)"
+                        }
+                    }]
+                },
+                {
                     node: "table",
                     attr: {
                         class: "table table-stripped table-hover table-bordered"
@@ -92,35 +122,40 @@
                             {
                                 node: "th",
                                 attr: {
-                                    scope: "col"
+                                    scope: "col",
+                                    style: "width: 15%;"
                                 },
                                 html: "#"
                             },
                             {
                                 node: "th",
                                 attr: {
-                                    scope: "col"
+                                    scope: "col",
+                                    style: "width: 20%;"
                                 },
                                 html: "Word"
                             },
                             {
                                 node: "th",
                                 attr: {
-                                    scope: "col"
+                                    scope: "col",
+                                    style: "width: 30%;"
                                 },
                                 html: "Meaning"
                             },
                             {
                                 node: "th",
                                 attr: {
-                                    scope: "col"
+                                    scope: "col",
+                                    style: "width: 20%;"
                                 },
                                 html: "Translation"
                             },
                             {
                                 node: "th",
                                 attr: {
-                                    scope: "col"
+                                    scope: "col",
+                                    style: "width: 15%;"
                                 },
                                 html: "Actions"
                             }]
@@ -136,6 +171,10 @@
             },
             tableContentTemplate = {
                 node: "tr",
+                attr: {
+                    class: "tableRow-$listId$",
+                    id: "tableRow-$listId$-$id$"
+                },
                 children: [
                 {
                     node: "th",
@@ -196,8 +235,15 @@
                 html: "$name$"
             };
         var temp = {
-            list: "1"
+            list: "1",
+            optionSelected: "1"
         };
+        var limits = {
+            word: 100,
+            meaning: 3000,
+            translation: 100,
+            exceedMessage: "One of your fields has exceeded the limit! We encourage words that are within 100 characters, meanings that are within 3000 characters, and translations that are within 100 characters."
+        }
             /*
             <option value="1" selected>default</option>
             */
@@ -223,7 +269,9 @@
                 document.getElementById("fm-lt").appendChild(ElGen.run(listSelectTemplate,{id: di,name: i[0]}));
                 di++;
             }
-            document.querySelector("#fm-lt>option[value='1']").setAttribute("selected","true");
+            if (document.querySelector("#fm-lt>option[value='"+temp.optionSelected+"']")!=null) {
+                document.querySelector("#fm-lt>option[value='"+temp.optionSelected+"']").setAttribute("selected","true");
+            }
             //document.getElementById("list-1-list").setAttribute("class")
             loadAllLists();
         };
@@ -242,17 +290,22 @@
                 if (t=="no such list"||t=="missing"||t=="wrong method") return;
                 var ld = Papa.parse(t, {delimiter: "#"}).data;
                 ld.pop();
-                console.log(ld);
+                //console.log(ld);
                 $("#tbody-"+listId).html("");
+                db[listName] = ld;
                 var di = 1;
                 for (var i of ld) {
-                    document.getElementById("tbody-"+listId).appendChild(ElGen.run(tableContentTemplate,{id: di, wd: i[0], mn: i[1], ts: i[2], listId: listId}, {strictReplace: true}));
+                    document.getElementById("tbody-"+listId).appendChild(ElGen.run(tableContentTemplate,{id: di, wd: i[0], mn: processHidden(i[1],1), ts: processHidden(i[2],2), listId: listId}, {strictReplace: true}));
                     di++;
                 }
             });
         };
+        var processHidden = function(td, ti) {
+            //if (localStorage(""))
+            return td;
+        };
         var dropdownClick = function(lid, id, act) {
-            $.post("action.php",{list:dbList[lid-1][0], id:id, action:act},function(t){
+            $.post("action.php",{list:getListName(lid), id:id, action:act},function(t){
                 switch (t) {
                     case "success":
                         di = 4;
@@ -265,10 +318,69 @@
                 showToast(di,(di==0?t:""));
             })
         };
+        var getListName = function(nt) {
+            return dbList[parseInt(nt)-1][0];
+        };
+        var searchKeydown = function(lt,sc) {
+            var inp = $("#search-"+lt).val();
+            console.log(inp);
+            if (inp=="") {
+                $(".tableRow-"+lt).show();
+                return;
+            }
+            else {
+                $(".tableRow-"+lt).hide();
+            }
+            var di = 1;
+            for (var lf of db[getListName(lt)]) {
+                if (lf[0].search(inp)!=-1) {
+                    $("#tableRow-"+lt+"-"+di).show();
+                }
+                di++;
+            }
+        };
+        var openModal = function(mi) {
+            $("#modal"+mi).modal();
+        };
+        var createNewList = function() {
+            var name = $("#nl-name").val();
+            $("#modal1").modal("hide");
+            if (name=="") {
+                return;
+            }
+            $.post("newList.php",{name:name},function(t){
+                if (t=="success") {
+                    showToast(6,"");
+                    loadDB();
+                }
+                else {
+                    showToast(0,t);
+                }
+            });
+        };
+        var deleteList = function() {
+            $("#modal2").modal("hide");
+            var activeList = $(".listContent.active")[0];
+            if (activeList!=null){
+                var lin = activeList.id.slice(5,activeList.id.length);
+                $.post("deleteList.php",{name:getListName(lin)},function(t){
+                    if (t=="success") {
+                        showToast(7,"");
+                        loadDB();
+                    }
+                    else {
+                        showToast(0,t);
+                    }
+                })
+            }
+            else{
+                return;
+            }
+        };
         var showToast = function(dd, wd) {
             $(".ts").hide();
             if (dd==0){
-                $("#tsp").html(t);
+                $("#tsp").html(wd);
             }
             $("#ts"+dd).show();
             $("#addnewToast").toast("show");
@@ -277,20 +389,35 @@
             loadDB();
             //listGen();
             //loadAllLists();
-            $("#addnewToast").toast({delay:2000});
+            $("#addnewToast").toast({delay:4000});
             $("#addnew").click(function(){
                 var wd = $("#fm-wd").val(),mn = $("#fm-mn").val(),ts = $("#fm-ts").val(),lt = $("#fm-lt").val();
                 if (wd==""||(mn==""&&ts=="")||lt==""){
-                    alert("Empty fields need to be filled");
+                    showToast(2,"");
                     return;
                 }
-                lt = dbList[parseInt(lt)-1][0];
+                if (wd.length>limits.word||mn.length>limits.meaning||ts.length>limits.translation) {
+                    showToast(0,limits.exceedMessage);
+                    return;
+                }
+                lt = getListName(lt);
+                //check same word
+                for (var lf of db[lt]) {
+                    if (lf[0]==wd) {
+                        showToast(5,"");
+                        return;
+                    }
+                }
+                temp.optionSelected = $("#fm-lt").val();
+                //check same word end
                 $.post(baseURL+"addnew.php",{word:wd,meaning:mn,translation:ts,list:lt},function(t){
                     console.log(t);
                     var di = 0;
                     switch (t) {
                         case "success":
                             di = 1;
+                            $("#fm-wd,#fm-mn,#fm-ts").val("");
+                            $("#fm-wd").focus();
                             loadDB();
                             break;
                         case "missing":
@@ -311,7 +438,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-dark fixed-top flex-md-nowrap bg-dark shadow">
+    <nav class="navbar navbar-dark fixed-top flex-md-nowrap bg-info shadow">
         <div class="container justify-content-start">
             <a class="navbar-brand" href="#">LVocab</a>
             <div class="navbar-text">Your Personal Vocabulary List</div>
@@ -319,7 +446,50 @@
     </nav>
     <!-- <div class="space"></div> -->
     <div class="container-fluid">
-        <div class="toast" id="addnewToast" style="position: absolute; top: 74px; right: 20px;     z-index: 5000;">
+        <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="newListModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newListModalLabel">New Vocabulary List</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="nl-name" class="col-form-label">Name:</label>
+                                <input type="text" class="form-control" id="nl-name">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="createNewList()">Create List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal2Label">Delete List</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete current list?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="deleteList()">Delete List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast fade hide" id="addnewToast" style="position: absolute; top: 74px; right: 20px;     z-index: 5000;">
             <div class="toast-header">
                 <strong class="mr-auto">Action Information</strong>
                 <!-- <small>11 mins ago</small> -->
@@ -329,10 +499,13 @@
             </div>
             <div class="toast-body">
                 <span class="ts text-success" id="ts1">Successfully added a new word.</span>
-                <span class="ts text-danger" id="ts2">Missing fields</span>
+                <span class="ts text-danger" id="ts2">Missing fields. You need to enter a word and either/both of the meaning and translation.</span>
                 <span class="ts text-danger" id="ts3">Oops, you have too many words in this list! Create a new list or use a different list.</span>
                 <span class="ts text-success" id="ts4">Successfully deleted a word form list.</span>
-                <span class="ts text-danger" id="ts0">Other Problem: <br /><span id="tsp"></span></span>
+                <span class="ts text-danger" id="ts5">Oops, looks like you already have this word in the list. If you want to update the meanings, delete the word from this list first.</span>
+                <span class="ts text-success" id="ts6">Successfully created a new list.</span>
+                <span class="ts text-success" id="ts7">List deleted.</span>
+                <span class="ts text-danger" id="ts0">Error Info: <br /><span id="tsp"></span></span>
             </div>
         </div>
         <div class="row">
@@ -378,55 +551,24 @@
                             <label for="fm-ts">Translation ( Optional )</label>
                             <input type="text" class="form-control" id="fm-ts">
                         </div>
-                        <button class="btn btn-primary" id="addnew">Add</button>
+                        <button type="button" class="btn btn-primary" id="addnew">Add</button>
                     </div>
                     <div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab">
-                        <h4 style="margin-left:20px;">My Vocabulary Lists</h4>
+                        <h4 style="margin-left:20px;" class="d-flex justify-content-between align-items-center">
+                            <span>My Vocabulary Lists</span>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary" onclick="openModal(1)">Create New...</button>
+                                <button type="button" class="btn btn-secondary" onclick="openModal(2)">Delete List</button>
+                            </div>
+                        </h4>
                         <div class="space"></div>
                         <div class="row">
                             <div class="col-3">
                                 <div class="list-group" id="list-tab" role="tablist">
-                                    <!--
-                                    <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Default <span class="badge badge-pill badge-secondary">1</span></a>
-                                    -->
                                 </div>
                             </div>
                             <div class="col-9">
                                 <div class="tab-content" id="nav-tabContent">
-                                    <!--
-                                    <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                                        <table class="table table-stripped">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Word</th>
-                                                    <th scope="col">Meaning</th>
-                                                    <th scope="col">Translation</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    -->
                                 </div>
                             </div>
                         </div>

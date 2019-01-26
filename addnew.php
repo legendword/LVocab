@@ -11,10 +11,10 @@ $ts = "";
 $lt = "";
 if (isset($_POST['word'])) $wd = rem($_POST['word']);
 else exit("missing");
-if (isset($_POST['list'])) $lt = trim(trim($_POST['list'],'/'),'.');
+if (isset($_POST['list'])) $lt = str_replace('.','',str_replace('/','',$_POST['list']));
 else $lt = "default";
 if (isset($_POST['meaning'])) {
-	$mn = $_POST['meaning'];
+	$mn = rem($_POST['meaning']);
 	if (isset($_POST['translation'])) $ts = rem($_POST['translation']);
 }
 else if (isset($_POST['translation'])) $ts = rem($_POST['translation']);
@@ -22,13 +22,16 @@ else exit("missing");
 
 if ($lt=="index") exit("invalid list name");
 
+if (strlen($wd)>100) exit("word too long");
+if (strlen($mn)>3000) exit("meaning too long");
+if (strlen($ts)>100) exit("translation too long");
 
 if (!file_exists($base.$uid."-index.csv")){
 	//new user for lvocab
 	//if (!is_dir($base.$uid)) mkdir($base.$uid);
-	if ($lt=="default") file_put_contents($base.$uid."-index.csv","default#1\n");
+	if ($lt=="default") file_put_contents($base.$uid."-index.csv","Default#1\n");
 	else {
-		file_put_contents($base.$uid."-index.csv","default#0\n".$lt."#1");
+		file_put_contents($base.$uid."-index.csv","Default#0\n".$lt."#1");
 	}
 	file_put_contents($base.$uid."-".$lt.".csv",$wd."#".$mn."#".$ts."\n");
 }
@@ -78,6 +81,6 @@ function parseCSV($fl,$dl) {
 	return $Data;
 }
 function rem($aw) {
-	return trim($aw,"#");
+	return str_replace('#','',$aw);
 }
 ?>
