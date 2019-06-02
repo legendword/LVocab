@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         LVocab Google Translate Plugin
 // @namespace    http://legendword.com/
+// @updateURL    https://github.com/legendword/LVocab/raw/master/LVocab%20Google%20Translate%20Plugin.user.js
 // @version      0.1
 // @description  LVocab Google Translate Plugin
 // @author       Legendword
@@ -8,7 +9,7 @@
 // @grant        GM_log
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
-// @connect      localhost
+// @connect      http://legendword.com
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -25,7 +26,7 @@ function lvocab_click() {
     document.getElementsByClassName("gt-cd-tr")[1].innerHTML = "";
     GM_xmlhttpRequest({
         method: "POST",
-        url: "http://localhost/LVocab/addnew.php",
+        url: "http://legendword.com/LVocab/addnew.php",
         data: "word="+encodeURIComponent(wd)+"&meaning="+encodeURIComponent(mn)+"&translation="+encodeURIComponent(ts),
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
