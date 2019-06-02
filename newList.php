@@ -8,7 +8,7 @@ else exit("missing");
 
 if ($lt=="index") exit("invalid list name");
 
-if (strlen($lt)>50) exit("list name too long");
+if (strlen($lt)>20) exit("list name too long");
 
 if (file_exists($base.$uid."-".$lt.".csv")) {
 	exit("list already exists");

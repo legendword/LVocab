@@ -10,7 +10,7 @@ $mn = "";
 $ts = "";
 $lt = "";
 if (isset($_POST['word'])) $wd = rem($_POST['word']);
-else exit("missing");
+else exit("missing word");
 if (isset($_POST['list'])) $lt = str_replace('.','',str_replace('/','',$_POST['list']));
 else $lt = "default";
 if (isset($_POST['meaning'])) {
@@ -18,13 +18,13 @@ if (isset($_POST['meaning'])) {
 	if (isset($_POST['translation'])) $ts = rem($_POST['translation']);
 }
 else if (isset($_POST['translation'])) $ts = rem($_POST['translation']);
-else exit("missing");
+else exit("missing meaning/translation");
 
 if ($lt=="index") exit("invalid list name");
 
-if (strlen($wd)>100) exit("word too long");
-if (strlen($mn)>3000) exit("meaning too long");
-if (strlen($ts)>100) exit("translation too long");
+if (strlen($wd)>100) exit("word too long (".strlen($wd).")");
+if (strlen($mn)>100000) exit("meaning too long (".strlen($mn).")");
+if (strlen($ts)>100000) exit("translation too long (".strlen($ts).")");
 
 if (!file_exists($base.$uid."-index.csv")){
 	//new user for lvocab

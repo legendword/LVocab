@@ -12,8 +12,12 @@
     <script src="PapaParse-4.6.0/papaparse.min.js"></script>
     <script src="ElGen.js"></script>
     <style>
-        .space {
-        margin-bottom: 30px;
+        body {
+        overflow-y: scroll;
+    }
+
+    .space {
+        margin-bottom: 20px;
     }
 
     .sidebar {
@@ -49,15 +53,225 @@
 
     tr {
         word-break: break-word;
+        cursor: default;
+    }
+
+    tr[data-active=true], tr[data-active=true]:hover {
+        background-color: rgba(3, 122, 255, 0.25) !important;
     }
 
     .toast {
         background-color: #fff !important;
     }
+
+    .wordDisplayCard {
+        margin-top: 20px;
+        line-height: initial;
+        cursor: auto;
+    }
+
+    #wordDisplay-main {
+        display: none;
+    }
+
+    .vocabTitle {
+        font-size: 2.5rem;
+    }
+
+    .tabTitle {
+        margin-left: 20px;
+        line-height: 1.5;
+    }
+
+    .platformInfo {
+        text-indent: 15px;
+        margin-top: 20px;
+    }
+
+    /* below are styles for LVocab Google Translate Plugin */
+
+    .gt-cd-pos {
+        color: #4285f4;
+        text-transform: capitalize;
+        font-size: 14px;
+        font-weight: 500;
+        margin: 5px 0 2px 8px;
+    }
+    #vocabMeaning .gt-cd-pos {
+        padding-bottom: 10px;
+    }
+    .gt-def-list {
+        margin-left: 56px;
+        margin-right: 20px;
+        unicode-bidi: embed;
+    }
+    .gt-def-info {
+        margin-bottom: 12px;
+    }
+    .gt-def-num {
+        position: absolute;
+        left: 35px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 14px;
+        text-align: center;
+        color: rgba(0,0,0,0.38);
+        padding-top: 1px;
+    }
+    .gt-def-num:after {
+        content: ".";
+    }
+    .gt-def-row {
+        color: #222;
+        unicode-bidi: inherit;
+    }
+    .gt-def-example {
+        color: rgba(0,0,0,0.54);
+        margin-top: 4px;
+        font-size: 14px;
+        unicode-bidi: inherit;
+    }
+    .gt-def-synonym {
+        color: #777;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        unicode-bidi: inherit;
+    }
+    .gt-def-synonym-title {
+        color: rgba(0,0,0,0.54);
+        display: block;
+        font-style: normal;
+        text-transform: capitalize;
+        margin: 16px 0 10px;
+    }
+    .gt-cd-cl {
+        color: rgba(0,0,0,0.54);
+        font-size: 14px;
+        font-weight: 400;
+        background: #fff;
+        border: 1px solid #dadce0;
+        border-radius: 32px;
+        margin-bottom: 6px;
+        display: inline-block;
+        height: 24px;
+        line-height: 24px;
+        margin: 0 4px 4px 0;
+        padding: 0 8px;
+        unicode-bidi: inherit;
+    }
+    .gt-baf-table {
+        padding-bottom: 30px;
+        width: 100%;
+        border-spacing: 0;
+    }
+    .gt-baf-table td {
+        padding: 0;
+    }
+    .gt-baf-pos-head {
+        margin: 5px 0 2px;
+        padding-left: 8px;
+        color: #222;
+        text-align: left;
+    }
+    .gt-baf-entry {
+        padding-left: 16px;
+        padding-right: 64px;
+        position: relative;
+    }
+    .gt-baf-entry>td {
+        padding-left: 15px;
+    }
+    .gt-baf-term-text-parent {
+        margin: 6px 0;
+        line-height: 24px;
+        white-space: nowrap;
+    }
+    .gt-baf-term-text {
+        color: rgba(0,0,0,0.87);
+        padding-right: 4px;
+    }
+    .gt-baf-word-selected {
+        font-weight: normal;
+        background-color: #fff;
+        color: #4285f4;
+    }
+    .gt-baf-word-selected .gt-baf-word-clickable {
+        color: #000;
+    }
+    .gt-baf-word-clickable {
+        color: #000;
+        vertical-align: top;
+        white-space: nowrap;
+        unicode-bidi: embed;
+    }
+    .gt-baf-entry-clickable>td:nth-of-type(2), .gt-baf-entry>td:nth-of-type(2) {
+        width: 100%;
+    }
+    .gt-baf-translations {
+
+        height: 18px;
+        overflow: hidden;
+        padding: 0 0 0 1em;
+        unicode-bidi: embed;
+        vertical-align: top;
+        white-space: nowrap;
+        color: rgba(0,0,0,0.54);
+        font-size: 14px;
+        line-height: 24px;
+        margin: 6px 8px 6px 12px;
+    }
+    .gt-baf-translations-mobile {
+        height: initial!important;
+        overflow: visible!important;
+        padding-left: 0!important;
+        white-space: initial!important;
+    }
+    .gt-baf-entry>td:nth-of-type(3) {
+        vertical-align: top;
+    }
+    .gt-baf-entry-score {
+        margin-right: 12px;
+        margin-top: 8px;
+        white-space: nowrap;
+    }
+    .filled.gt-score-dot {
+        background-color: #4285f4;
+    }
+    .gt-score-dot {
+        border-radius: 1px;
+        display: inline-block;
+        height: 6px;
+        margin: 8px 1px 1px;
+        vertical-align: top;
+        width: 10px;
+    }
+    .empty.gt-score-dot {
+        background-color: #dadce0;
+    }
+    .gt-cd-pos-pop {
+        color: rgba(0,0,0,0.54);
+        display: inline-block;
+        float: right;
+        font-size: 12px;
+        font-style: italic;
+        letter-spacing: -0.05px;
+        margin-right: 12px;
+        margin-top: -2px;
+    }
+    .gt-cd-pos-pop .help-icon-container {
+        display: none; /* changed so that help icon disappears */
+        position: relative;
+    }
+    tr:not(:first-of-type) div.gt-baf-pos-head {
+        padding-top: 15px;
+    }
     </style>
     <script>
         //var baseURL = "http://legendword.com/lvocab/";
         var baseURL = "",
+            version = "0.1.01",
             user = "test",
             dbList = [],
             dbLoaded = false,
@@ -131,7 +345,7 @@
                                 node: "th",
                                 attr: {
                                     scope: "col",
-                                    style: "width: 20%;"
+                                    style: "width: 70%;"
                                 },
                                 html: "Word"
                             },
@@ -139,25 +353,9 @@
                                 node: "th",
                                 attr: {
                                     scope: "col",
-                                    style: "width: 30%;"
-                                },
-                                html: "Meaning"
-                            },
-                            {
-                                node: "th",
-                                attr: {
-                                    scope: "col",
-                                    style: "width: 20%;"
-                                },
-                                html: "Translation"
-                            },
-                            {
-                                node: "th",
-                                attr: {
-                                    scope: "col",
                                     style: "width: 15%;"
                                 },
-                                html: "Actions"
+                                html: "Action"
                             }]
                         }]
                     },
@@ -173,7 +371,10 @@
                 node: "tr",
                 attr: {
                     class: "tableRow-$listId$",
-                    id: "tableRow-$listId$-$id$"
+                    id: "tableRow-$listId$-$id$",
+                    "data-rowlist": "$listId$",
+                    "data-rowid": "$id$",
+                    onclick: "vocabClick(this)"
                 },
                 children: [
                 {
@@ -186,14 +387,6 @@
                 {
                     node: "td",
                     html: "$wd$"
-                },
-                {
-                    node: "td",
-                    html: "$mn$"
-                },
-                {
-                    node: "td",
-                    html: "$ts$"
                 },
                 {
                     node: "td",
@@ -243,7 +436,40 @@
             meaning: 3000,
             translation: 100,
             exceedMessage: "One of your fields has exceeded the limit! We encourage words that are within 100 characters, meanings that are within 3000 characters, and translations that are within 100 characters."
-        }
+        };
+        var settings = {
+            showMeaning: 1
+        };
+        var loadSettings = function(){
+            settings.version = version;
+            if (localStorage["LVocabSettings"]!=null){
+                var res = null;
+                try {
+                    res = JSON.parse(localStorage["LVocabSettings"]);
+                }
+                catch (err) {
+
+                }
+                //console.log(res);
+                if (res.version!=settings.version){
+                    //mergeSettings(res);
+                    ////todo: merge settings if on different version
+                    updateSettings();
+                }
+                else{
+                    settings = res;
+                    if (settings.showMeaning!=1) {
+                        $("#inputGroupSelect01").val(settings.showMeaning);
+                    }
+                }
+            }
+            else{
+                updateSettings();
+            }
+        };
+        var updateSettings = function(){
+            localStorage["LVocabSettings"] = JSON.stringify(settings);
+        };
             /*
             <option value="1" selected>default</option>
             */
@@ -295,14 +521,10 @@
                 db[listName] = ld;
                 var di = 1;
                 for (var i of ld) {
-                    document.getElementById("tbody-"+listId).appendChild(ElGen.run(tableContentTemplate,{id: di, wd: i[0], mn: processHidden(i[1],1), ts: processHidden(i[2],2), listId: listId}, {strictReplace: true}));
+                    document.getElementById("tbody-"+listId).appendChild(ElGen.run(tableContentTemplate,{id: di, wd: decodeURIComponent(i[0]), mn: decodeURIComponent(i[1]), ts: decodeURIComponent(i[2]), listId: listId}, {strictReplace: true}));
                     di++;
                 }
             });
-        };
-        var processHidden = function(td, ti) {
-            //if (localStorage(""))
-            return td;
         };
         var dropdownClick = function(lid, id, act) {
             $.post("action.php",{list:getListName(lid), id:id, action:act},function(t){
@@ -316,14 +538,14 @@
                         break;
                 }
                 showToast(di,(di==0?t:""));
-            })
+            });
         };
         var getListName = function(nt) {
             return dbList[parseInt(nt)-1][0];
         };
         var searchKeydown = function(lt,sc) {
             var inp = $("#search-"+lt).val();
-            console.log(inp);
+            //console.log(inp);
             if (inp=="") {
                 $(".tableRow-"+lt).show();
                 return;
@@ -385,12 +607,24 @@
             $("#ts"+dd).show();
             $("#addnewToast").toast("show");
         };
+        var vocabClick = function(vc) {
+            $("tr[data-active=true]").attr("data-active","false");
+            vc.dataset.active = "true";
+
+            var vocab = db[dbList[parseInt(vc.dataset.rowlist)-1][0]][parseInt(vc.dataset.rowid)-1];
+            $("#vocabWord").html(vocab[0]);
+            $("#vocabMeaningContent").html(vocab[1]);
+            $("#vocabTranslationContent").html(vocab[2]);
+            $("#wordDisplay-main").show();
+        };
         $(function(){
             loadDB();
+            loadSettings();
             //listGen();
             //loadAllLists();
             $("#addnewToast").toast({delay:4000});
-            $("#addnew").click(function(){
+
+            var addVocabFunction = function(){
                 var wd = $("#fm-wd").val(),mn = $("#fm-mn").val(),ts = $("#fm-ts").val(),lt = $("#fm-lt").val();
                 if (wd==""||(mn==""&&ts=="")||lt==""){
                     showToast(2,"");
@@ -410,7 +644,7 @@
                 }
                 temp.optionSelected = $("#fm-lt").val();
                 //check same word end
-                $.post(baseURL+"addnew.php",{word:wd,meaning:mn,translation:ts,list:lt},function(t){
+                $.post(baseURL+"addnew.php",{word:encodeURIComponent(wd),meaning:encodeURIComponent(mn),translation:encodeURIComponent(ts),list:lt},function(t){
                     console.log(t);
                     var di = 0;
                     switch (t) {
@@ -431,8 +665,18 @@
                             break;
                     }
                     showToast(di,(di==0?t:""));
-                })
-            })
+                });
+            };
+            $("#addnew").click(addVocabFunction);
+            $("#fm-ts").keydown(function(t){
+                if (t.keyCode==13) addVocabFunction();
+            });
+
+
+            $("#inputGroupSelect01").change(function(){
+                settings.showMeaning = this.value;
+                updateSettings();
+            });
         })
     </script>
 </head>
@@ -530,70 +774,119 @@
             <main role="main" class="mainMain col-md-9 ml-sm-auto col-lg-10 px-4">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                        <h4>LVocab - Home</h4>
-                        <div class="space"></div>
-                        <h5>Add New Vocabulary</h5>
-                        <div class="form-group">
-                            <label for="fm-lt">Vocab List</label>
-                            <select class="form-control" id="fm-lt">
-                            </select>
+                        <h4 class="tabTitle">Legendword Vocabulary</h4>
+                        <div class="platformInfo">
+                            <p>Welcome to Legendword Vocabulary! This is a vocabulary memorization platform. You can add, view, and review your saved vocabularies here.</p>
+                            <p>LVocab is meant to be used with Google Translate. <b>Read "Getting Started" to get information on how to start using this platform.</b></p>
+                            <p>Right now, LVocab is still in development stage. Some have not been added yet. You may also experience some bugs or errors. Contact <a href="mailto:contact@legendword.com">contact@legendword.com</a> for bug report and suggestions. With all</p>
                         </div>
-                        <div class="form-group">
-                            <label for="fm-wd">Word</label>
-                            <input type="text" class="form-control" id="fm-wd">
+                        <div class="space">&nbsp;</div>
+                        <div class="card">
+                            <a class="text-decoration-none text-reset" href="#gettingStarted" data-toggle="collapse">
+                                <div class="card-header">Getting Started</div>
+                            </a>
+                            <div class="collapse" id="gettingStarted">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="fm-mn">Meaning</label>
-                            <!-- <input type="text" class="form-control" id="fm-mn"> -->
-                            <textarea class="form-control" id="fm-mn"></textarea>
+                        <div class="space">&nbsp;</div>
+                        <div class="card">
+                            <a class="text-decoration-none text-reset" href="#newVocabOuter" data-toggle="collapse">
+                                <div class="card-header">Add Vocabulary Manually</div>
+                            </a>
+                            <div class="collapse" id="newVocabOuter">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="fm-lt">Vocab List</label>
+                                        <select class="form-control" id="fm-lt">
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fm-wd">Word</label>
+                                        <input type="text" class="form-control" id="fm-wd">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fm-mn">Meaning</label>
+                                        <!-- <input type="text" class="form-control" id="fm-mn"> -->
+                                        <textarea class="form-control" id="fm-mn"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fm-ts">Translation</label>
+                                        <input type="text" class="form-control" id="fm-ts">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="addnew">Add</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="fm-ts">Translation ( Optional )</label>
-                            <input type="text" class="form-control" id="fm-ts">
-                        </div>
-                        <button type="button" class="btn btn-primary" id="addnew">Add</button>
                     </div>
                     <div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab">
-                        <h4 style="margin-left:20px;" class="d-flex justify-content-between align-items-center">
-                            <span>My Vocabulary Lists</span>
+                        <h4 class="tabTitle d-flex justify-content-between align-items-center">
+                            <span>Vocabulary List</span>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary" onclick="openModal(1)">Create New...</button>
+                                <button type="button" class="btn btn-primary" onclick="loadDB()">Refresh</button>
+                                <button type="button" class="btn btn-success" onclick="openModal(1)">Create New...</button>
                                 <button type="button" class="btn btn-secondary" onclick="openModal(2)">Delete List</button>
                             </div>
                         </h4>
                         <div class="space"></div>
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-2">
                                 <div class="list-group" id="list-tab" role="tablist">
                                 </div>
                             </div>
-                            <div class="col-9">
+                            <div class="col-3">
                                 <div class="tab-content" id="nav-tabContent">
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div id="wordDisplay-main">
+                                    <h3 class="vocabTitle"><span id="vocabWord"></span></h3>
+                                    <div class="card wordDisplayCard">
+                                        <a class="text-decoration-none text-reset" href="#vocabMeaning" data-toggle="collapse">
+                                            <div class="card-header">Definition</div>
+                                        </a>
+                                        <div class="collapse show" id="vocabMeaning">
+                                            <div class="card-body" id="vocabMeaningContent">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card wordDisplayCard">
+                                        <a class="text-decoration-none text-reset" href="#vocabTranslation" data-toggle="collapse">
+                                            <div class="card-header">Translation</div>
+                                        </a>
+                                        <div class="collapse show" id="vocabTranslation">
+                                            <div class="card-body" id="vocabTranslationContent">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-review" role="tabpanel" aria-labelledby="v-pills-review-tab">
-                        <h4>Review</h4>
+                        <h4 class="tabTitle">Review</h4>
                         <div class="space"></div>
                         <p>Function still in development...</p>
                     </div>
                     <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-                        <h4>Settings</h4>
+                        <h4 class="tabTitle">Settings</h4>
                         <div class="space"></div>
-                        <h5>Vocabulary Lists</h5>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="inputGroupSelect01">Show Meaning</label>
+                        <p class="text-muted"><i>* Some settings may only take effect after reloading the page.</i></p>
+                        <div style="display:none;">
+                            <h5>Vocabulary Lists</h5>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Show Meaning</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01">
+                                    <!-- <option selected>Choose...</option> -->
+                                    <option value="1">Show All</option>
+                                    <option value="2">Show None</option>
+                                    <option value="3">Show Translation Only</option>
+                                    <option value="4">Show Meaning Only</option>
+                                </select>
                             </div>
-                            <select class="custom-select" id="inputGroupSelect01">
-                                <!-- <option selected>Choose...</option> -->
-                                <option value="1" selected>Show All</option>
-                                <option value="2">Show None</option>
-                                <option value="3">Show Translation Only</option>
-                                <option value="4">Show Meaning Only</option>
-                            </select>
                         </div>
+                        <p>Settings are in development...</p>
                     </div>
                 </div>
             </main>
