@@ -6,6 +6,9 @@
 // @description  LVocab Google Translate Plugin
 // @author       Legendword
 // @match        https://translate.google.com/*
+// @match        https://translate.google.cn/*
+// @match        https://translate.google.ca/*
+// @match        https://translate.google.co.uk/*
 // @grant        GM_log
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
