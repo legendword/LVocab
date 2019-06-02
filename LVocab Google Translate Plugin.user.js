@@ -9,7 +9,7 @@
 // @grant        GM_log
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
-// @connect      http://legendword.com
+// @connect      legendword.com
 // @run-at       document-idle
 // ==/UserScript==
 
