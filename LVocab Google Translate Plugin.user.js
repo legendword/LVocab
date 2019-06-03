@@ -74,6 +74,7 @@ function lvocab() {
     else {
         GM_log("LVocab Plugin Loaded (v0.1)");
         GM_log(GM_getValue("tsRequest"));
+        if (GM_getValue("tsRequest")=="1") GM_setValue("tsRequest", "0");
         setInterval(lvocab_addBtn, 500);
         GM_addValueChangeListener("tsRequest", function(name, oldv, newv, remote){
             if (remote==true&&newv=="1") translateWord();
